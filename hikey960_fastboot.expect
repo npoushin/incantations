@@ -1,0 +1,17 @@
+#!/bin/expect
+
+set timeout 60
+
+spawn telnet localhost 2004
+
+expect "Press ESCAPE for boot options"
+
+# 'f' is the magic key to press for entering fastboot, which is what we need for the following steps"
+# We do it more than once becuase we are superstitious
+send "f\r"
+send "f\r"
+send "f\r"
+
+sleep 2
+
+exit
