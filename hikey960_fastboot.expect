@@ -8,10 +8,15 @@ expect "Press ESCAPE for boot options"
 
 # 'f' is the magic key to press for entering fastboot, which is what we need for the following steps"
 # We do it more than once becuase we are superstitious
-send "f\r"
-send "f\r"
-send "f\r"
-
-sleep 2
-
-exit
+send -- "f\r"
+expect {
+    -regexp ".*FastbootTransportUsbDxe" {
+        sleep 1
+    }
+    timeout {
+        exit 1
+    }
+}
+send -- "f\r"
+send -- "close\r"
+interact

@@ -155,37 +155,28 @@ function flash_fastboot_images ()
 #	be that we have to display a similar prompt clearing both recovery and
 #	fastboot switches to enable a normal boot.
 
+
 	echo "Update images ..."
 
 	pushd ${BUILD_PATH}/tools-images-hikey960
 
-	expect ${BUILD_PATH}/../hikey960_fastboot.expect
+	expect ${BUILD_PATH}/../hikey960_fastboot.expect > /dev/null
 
+	#Flash bootloader images
 	sudo fastboot flash ptable ${BUILD_PATH}/../debian/prm_ptable_debian.img
 	sudo fastboot flash xloader hisi-sec_xloader.img
 	sudo fastboot flash fastboot l-loader.bin
 	sudo fastboot flash fip fip.bin
-
-	sleep 1
-
-	echo "Prepare to enter normal mode."
-	echo "Please power off your Hikey960 board and set the boot switches to:"
+	#Flash OS images
+	sudo fastboot flash boot ${BUILD_PATH}/../debian/boot-linaro-stretch-developer-hikey-*.img
+	sudo fastboot flash system ${BUILD_PATH}/../debian/rootfs-linaro-stretch-developer-hikey-*.img
+	popd
+	echo "Please power off your Hikey960 board and set the boot switches to normal mode:"
 	echo "		Switch 1: Auto Power Up: ON"
 	echo "		Switch 2: Boot Mode    : OFF"
 	echo "		Switch 3: Ext. Boot    : OFF"
 	echo ""
-	echo "Power on your board ..."
-
-	sleep 1
-
-	expect ${BUILD_PATH}/../hikey960_fastboot.expect
-
-	sleep 1
-
-	sudo fastboot flash boot ${BUILD_PATH}/../debian/boot-linaro-stretch-developer-hikey-*.img
-	sudo fastboot flash system ${BUILD_PATH}/../debian/rootfs-linaro-stretch-developer-hikey-*.img
-
-	popd
+	echo "Remove the USB-C cable from PC and Power on your board ..."
 }
 
 clone_repos
